@@ -17,8 +17,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.runOnlyPendingTimers();
+  // jest.runOnlyPendingTimers();
   jest.useRealTimers();
+  jest.clearAllTimers();
 });
 
 // const onChange = jest.fn();
@@ -47,7 +48,9 @@ test("decrements the timer by 1 every second", () => {
 
 test("calls onAnswered after 10 seconds", () => {
   const onAnswered = jest.fn();
-  render(<Question question={testQuestion} onAnswered={onAnswered} />);
+  act(() => {
+    render(<Question question={testQuestion} onAnswered={onAnswered} />);
+  });
   act(() => {
     jest.advanceTimersByTime(11000);
   });
@@ -55,10 +58,10 @@ test("calls onAnswered after 10 seconds", () => {
 });
 
 test("clears the timeout after unmount", () => {
-  jest.spyOn(global, 'clearTimeout');
+  jest.spyOn(global, 'clearInterval');
   const { unmount } = render(
     <Question question={testQuestion} onAnswered={noop} />
   );
   unmount();
-  expect(clearTimeout).toHaveBeenCalled();
+  expect(clearInterval).toHaveBeenCalled();
 });
